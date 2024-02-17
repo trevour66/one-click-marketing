@@ -50,18 +50,18 @@ const copyEmbedLink = async () => {
 </script>
 
 <template>
-	<Head title="Dashboard" />
+	<Head title="Create New Link" />
 
 	<AuthenticatedLayout>
 		<template #header>
 			<h2 class="font-semibold text-xl text-gray-800 leading-tight">
-				Dashboard
+				Create New Link
 			</h2>
 		</template>
 
 		<div class="py-12">
 			<div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-				<div class="mb-4 sticky top-2">
+				<!-- <div class="mb-4 sticky top-2">
 					<PrimaryButton
 						@click.prevent="copyEmbedLink"
 						type="button"
@@ -69,7 +69,7 @@ const copyEmbedLink = async () => {
 						>Copy Embed link</PrimaryButton
 					>
 					<div class="clear-both"></div>
-				</div>
+				</div> -->
 				<div class="overflow-hidden sm:rounded-lg">
 					<NewLink
 						:user_unique_public_id="user_unique_public_id"

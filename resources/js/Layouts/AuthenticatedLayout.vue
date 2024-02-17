@@ -33,13 +33,13 @@ const showingNavigationDropdown = ref(false);
 									:href="route('dashboard')"
 									:active="route().current('dashboard')"
 								>
-									Dashboard
+									Create New Link
 								</NavLink>
 								<NavLink
 									:href="route('marketing_link.index')"
 									:active="route().current('marketing_link.index')"
 								>
-									Marketing Link
+									All Links
 								</NavLink>
 							</div>
 						</div>
@@ -139,13 +139,13 @@ const showingNavigationDropdown = ref(false);
 							:href="route('dashboard')"
 							:active="route().current('dashboard')"
 						>
-							Dashboard
+							Create New Link
 						</ResponsiveNavLink>
 						<ResponsiveNavLink
 							:href="route('marketing_link.index')"
 							:active="route().current('marketing_link.index')"
 						>
-							Marketing Link
+							All Links
 						</ResponsiveNavLink>
 					</div>
 

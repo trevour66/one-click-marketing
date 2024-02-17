@@ -48,12 +48,12 @@ const editLink = (link) => {
 		:email_providers="email_providers"
 		v-if="modalStore.currentModal === 'NEW_LINK'"
 	/>
-	<Head title="Marketing Link" />
+	<Head title="All Links" />
 
 	<AuthenticatedLayout>
 		<template #header>
 			<h2 class="font-semibold text-xl text-gray-800 leading-tight">
-				Marketing Link
+				All Links
 			</h2>
 		</template>
 
