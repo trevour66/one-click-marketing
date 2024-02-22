@@ -139,9 +139,9 @@ class EmailMarketingLinkController extends Controller{
                 throw new Error('System error. Please try again and if problem persist, contact support');
             }
 
-            $domain = "http://127.0.0.1:8000/";
+            $domain = config('app.url');
 
-            $full_link = $domain."cl/".$uniqueId."/?email=".$merge_tag_email."&fname=".$merge_tag_firstname."&lname=".$merge_tag_lastname;
+            $full_link = $domain."/"."cl/".$uniqueId."/?email=".$merge_tag_email."&fname=".$merge_tag_firstname."&lname=".$merge_tag_lastname;
 
 
             $newLink = emailMarketingLink::create(
@@ -216,12 +216,115 @@ class EmailMarketingLinkController extends Controller{
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\emailMarketingLink  $emailMarketingLink
+     * @param  String $emailMarketingLink_id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, emailMarketingLink $emailMarketingLink)
+    public function update(Request $request, string $emailMarketingLink_id)
     {
-        //
+        try {
+            $emailMarketingLink_id = $emailMarketingLink_id ?? false;
+            
+            $emailMarketingLink = emailMarketingLink::where("email_marketing_links_id", "=", $emailMarketingLink_id)->first() ?? false;
+
+            if(! $emailMarketingLink){
+                throw new Error('No match found. Please contact support');
+            }
+
+            $validated = $request->validate([
+                'link_identifier' => 'required|string',
+                'user_unique_public_id' => 'required|string',
+                'name' => 'required|string',
+                'campaign' => 'required|string',
+                'zapier_webhook_url' => 'required|url:http,https',
+                'partner_email_service' => 'required|numeric',
+                'success_page_url' => 'required|url:http,https',
+                'failure_page_url' => 'required|url:http,https',
+            ]);
+
+            $user = User::where("user_unique_public_id", "=", $validated["user_unique_public_id"])->first() ?? false;
+
+
+            if(!$user){
+                throw new Error('System error. Please try again and if problem persist, contact support');
+            }
+
+            $doesLinkWithSameNameExist = emailMarketingLink::where("name", "=", $validated["name"])->first() ?? false;
+
+            if($doesLinkWithSameNameExist){
+                if($doesLinkWithSameNameExist->email_marketing_links_id != $emailMarketingLink_id){
+
+                    throw new Error('Link with the same name already exist. Please change the name');
+                }
+            }
+
+            $provider = emailMarketingPlatform::where("email_marketing_platforms_id", "=", $validated["partner_email_service"])->first() ?? false;
+
+
+            if(!$provider){
+                throw new Error('We experienced a problem identifying the email provider. Please try again and if problem persist, contact support');
+            }
+
+            $name = $provider->name ?? false;
+            $merge_tag_email = $provider->merge_tag_email ?? false;
+            $merge_tag_firstname = $provider->merge_tag_firstname ?? false;
+            $merge_tag_lastname = $provider->merge_tag_lastname ?? false ;
+
+            if(
+                !$name ||
+                !$merge_tag_email ||
+                !$merge_tag_firstname ||
+                !$merge_tag_lastname
+            ){
+                throw new Error('We experienced a problem identifying the email provider. Please try again and if problem persist, contact support');
+            }
+
+
+            $domain = config('app.url');
+
+            $full_link = $domain."/"."cl/".$emailMarketingLink->link_identifier."/?email=".$merge_tag_email."&fname=".$merge_tag_firstname."&lname=".$merge_tag_lastname;
+
+
+            $emailMarketingLink->update(               
+                [
+                    'name' => $validated["name"],
+                    'failure_page_url' => $validated["failure_page_url"],
+                    'success_page_url' => $validated["success_page_url"],
+                    'full_link' => $full_link,
+                    'email_marketing_platforms_id' => $validated["partner_email_service"],
+                    'campaign' => $validated["campaign"],
+                    'zapier_webhook_url' => $validated["zapier_webhook_url"],
+                ]
+            );
+
+            $resData = response(json_encode([
+                    'status' => "success",
+                    "data" => [
+                        'name' => $emailMarketingLink->name,
+                        'failure_page_url' => $emailMarketingLink->failure_page_url,
+                        'success_page_url' => $emailMarketingLink->success_page_url,
+                        'link_identifier' => $emailMarketingLink->link_identifier,
+                        'full_link' => $emailMarketingLink->full_link,
+                        'email_marketing_platforms_id' => $emailMarketingLink->email_marketing_platforms_id,
+                        'campaign' => $emailMarketingLink->campaign,
+                        'zapier_webhook_url' => $emailMarketingLink->zapier_webhook_url,
+                    ],
+                ]
+            ), 200)
+            ->header('Content-Type', 'application/json');
+    
+            return $resData;   
+        } catch (\Throwable $th) {
+            logger($th->getMessage());
+            $resData = response(json_encode([
+                    'status' => "error",
+                    "data" => null,
+                    "message" => $th->getMessage()
+                ]
+            ), 400)
+            ->header('Content-Type', 'application/json');
+
+            return $resData;
+        }
     }
 
     /**

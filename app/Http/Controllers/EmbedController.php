@@ -46,7 +46,7 @@ class EmbedController extends Controller
             $providers = emailMarketingPlatform::get();
             $user_unique_public_id = $user_unique_public_id ?? false;
 
-            logger($user_unique_public_id);
+            // logger($user_unique_public_id);
             
             $user = User::where("user_unique_public_id", "=", $user_unique_public_id)->first() ?? false;
     
@@ -73,7 +73,6 @@ class EmbedController extends Controller
     public function store(Request $request)
     {
         try {
-            logger('here');
             $validated = $request->validate([
                 'name' => 'required|string',
                 'user_unique_public_id' => 'required|string',
@@ -82,7 +81,7 @@ class EmbedController extends Controller
                 'partner_email_service' => 'required|numeric',
                 'success_page_url' => 'required|url:http,https',
                 'failure_page_url' => 'required|url:http,https',
-                // 'g_recaptcha_response' => 'required|recaptcha'
+                // 'g_recaptcha_response' => 'required|recaptcha' // Recaptcha Disabled. To enable, please complete the integration @https://serdarcevher.medium.com/how-to-make-laravel-vue-inertia-js-use-google-recaptcha-without-installing-a-package-e6131bae1fd8
             ]);
 
             $user = User::where("user_unique_public_id", "=", $validated["user_unique_public_id"])->first() ?? false;

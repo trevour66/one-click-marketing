@@ -94,18 +94,28 @@ defineProps({
 								click, revolutionizing the way you grow your email list.
 							</p>
 							<div class="mt-10 flex items-center justify-center gap-x-6">
-								<Link
-									:href="route('login')"
-									class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-									>Log in</Link
-								>
+								<template v-if="$page.props.auth.user">
+									<Link
+										:href="route('dashboard')"
+										class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+										>Dashboard</Link
+									>
+								</template>
 
-								<Link
-									v-if="canRegister"
-									:href="route('register')"
-									class="text-sm font-semibold leading-6 text-gray-900"
-									>Register</Link
-								>
+								<template v-else>
+									<Link
+										:href="route('login')"
+										class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+										>Log in</Link
+									>
+
+									<Link
+										v-if="canRegister"
+										:href="route('register')"
+										class="text-sm font-semibold leading-6 text-gray-900"
+										>Register</Link
+									>
+								</template>
 							</div>
 						</div>
 					</div>

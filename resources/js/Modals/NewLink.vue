@@ -2,8 +2,7 @@
 import axios from "axios";
 import Swal from "sweetalert2";
 
-import { initFlowbite } from "flowbite";
-import { initTooltips } from "flowbite";
+import { initFlowbite, initTooltips } from "flowbite";
 
 import { onMounted, ref, reactive } from "vue";
 import { useForm, usePage, router } from "@inertiajs/vue3";
@@ -16,6 +15,8 @@ import { useModalStore } from "@/Store/modal";
 const user = usePage().props.auth.user;
 
 const modalStore = useModalStore();
+
+const user_unique_public_id = user.user_unique_public_id;
 
 const props = defineProps({
 	email_providers: Array,
@@ -63,7 +64,6 @@ const resetResponseData = () => {
 };
 
 const newLinkForm_submit = async () => {
-	resetResponseData();
 	let URL = route("marketing_link.store");
 
 	await axios
@@ -75,8 +75,11 @@ const newLinkForm_submit = async () => {
 
 			zapier_webhook_url: form.zapier_webhook_url,
 			campaign: form.campaign,
+			user_unique_public_id: user_unique_public_id,
 		})
 		.then(function (response) {
+			resetResponseData();
+
 			const data = response?.data?.data ?? false;
 
 			linkCreated.email_marketing_platforms_id =
@@ -101,7 +104,7 @@ const newLinkForm_submit = async () => {
 			}).then(async (result) => {
 				if (result.isConfirmed) {
 					let backURL = route("marketing_link.index");
-					router.visit();
+					router.visit(backURL);
 					modalStore.closeModal();
 				}
 			});

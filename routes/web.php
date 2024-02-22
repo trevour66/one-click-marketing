@@ -53,7 +53,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/email_platform/{email_platform_id}', [EmailMarketingPlatformController::class, 'update'])->name('email_platform.update');
 
     Route::get('/marketing_link', [EmailMarketingLinkController::class, 'index'])->name('marketing_link.index');
-    Route::get('/marketing_link/{marketing_link_id}', [EmailMarketingLinkController::class, 'show'])->name('marketing_link.show');
+
 });
 
 require __DIR__.'/auth.php';

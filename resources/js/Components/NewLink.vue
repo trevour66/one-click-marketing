@@ -2,8 +2,7 @@
 import axios from "axios";
 import Swal from "sweetalert2";
 
-import { initFlowbite } from "flowbite";
-import { initTooltips } from "flowbite";
+import { initFlowbite, initTooltips } from "flowbite";
 
 import { onMounted, ref, reactive } from "vue";
 import { useForm, usePage, router } from "@inertiajs/vue3";
@@ -11,13 +10,13 @@ import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 
-import { useRecaptcha } from "../Composables/ReCaptcha";
+// import { useRecaptcha } from "../Composables/ReCaptcha";
 
 import { useModalStore } from "@/Store/modal";
 
 const user = usePage().props.auth.user;
 const modalStore = useModalStore();
-useRecaptcha();
+// useRecaptcha();
 
 const props = defineProps({
 	email_providers: Array,
@@ -38,7 +37,7 @@ const form = reactive({
 	campaign: "",
 	zapier_webhook_url: "",
 
-	g_recaptcha_response: "",
+	// g_recaptcha_response: "",
 });
 
 const error = ref(false);
@@ -84,8 +83,6 @@ const resetResponseData = () => {
 
 const newLinkForm_submit = async () => {
 	resetResponseData();
-
-	// form.g_recaptcha_response = event.target["g-recaptcha-response"].value;
 
 	let URL = "";
 
