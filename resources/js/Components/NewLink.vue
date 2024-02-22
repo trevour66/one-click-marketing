@@ -139,6 +139,9 @@ const newLinkForm_submit = async () => {
 				});
 			}
 
+			const element = document.getElementById("LinkContainer");
+			element.scrollIntoView();
+
 			console.log(response);
 		})
 		.catch(function (err) {
@@ -188,8 +191,10 @@ onMounted(() => {
 						<div v-if="error_message" class="my-4 font-semibold text-red-800">
 							{{ error_message }}
 						</div>
+
 						<div
 							v-if="success"
+							id="LinkContainer"
 							class="my-6 font-semibold text-gray-500 text-sm"
 						>
 							<span class="text-green-800"> Link created: </span> <br /><br />
@@ -407,14 +412,16 @@ onMounted(() => {
 								</div>
 							</fieldset>
 
-							<template v-if="embedded">
+							<!-- 
+								In case RECAPTCHA is needed
+								<template v-if="embedded">
 								<div
 									class="g-recaptcha my-4"
 									:data-sitekey="
 										$page.props.google_recaptcha_config.google_recaptcha_key
 									"
 								></div>
-							</template>
+							</template> -->
 
 							<InputError class="mt-2" :message="error" />
 							<div class="flex items-center gap-4">
