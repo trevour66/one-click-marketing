@@ -5,8 +5,11 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import NewLink from "@/Modals/NewLink.vue";
 import EditLink from "@/Modals/EditLink.vue";
 
+import axios from "axios";
+import Swal from "sweetalert2";
+
 import { onMounted, ref, reactive } from "vue";
-import { Head } from "@inertiajs/vue3";
+import { Head, router } from "@inertiajs/vue3";
 import { useModalStore } from "@/Store/modal";
 import { useClipboard, usePermission } from "@vueuse/core";
 
@@ -35,6 +38,47 @@ const copyLink = async (full_link) => {
 const editLink = (link) => {
 	linkToBeEdited.value = link;
 	modalStore.openEditLinkModal();
+};
+
+const testZapierWebhook = async (link) => {
+	const email_marketing_links_id = link?.email_marketing_links_id ?? false;
+	const zapier_webhook_url = link?.zapier_webhook_url ?? false;
+
+	if (!email_marketing_links_id || !zapier_webhook_url) {
+		Swal.fire({
+			icon: "error",
+			title: "Test Failed!",
+			html: `<div class="p-4 text-sm text-gray-800 rounded-lg bg-gray-50 text-center">
+					<span class="font-medium">Please contact support</span>
+					</div>`,
+		});
+	}
+
+	const URL = route("marketing_link.test_zapier_hook", {
+		marketing_link_id: email_marketing_links_id,
+	});
+
+	await axios
+		.post(URL)
+		.then(function (response) {
+			Swal.fire({
+				icon: "success",
+				title: "Test Data Sent!",
+				html: `<div class="p-4 text-sm text-gray-800 rounded-lg bg-gray-50 text-center">
+					<span class="font-medium">Some test data has been sent to your Zap at ${zapier_webhook_url}</span>
+					</div>`,
+			});
+		})
+		.catch(function (err) {
+			console.log(err);
+			Swal.fire({
+				icon: "error",
+				title: "Test Failed!",
+				html: `<div class="p-4 text-sm text-gray-800 rounded-lg bg-gray-50 text-center">
+					<span class="font-medium">Please contact support</span>
+					</div>`,
+			});
+		});
 };
 </script>
 
@@ -130,6 +174,11 @@ const editLink = (link) => {
 									</span>
 								</p>
 								<div class="float-right">
+									<SecondaryButton
+										@click.prevent="testZapierWebhook(link)"
+										class="inline-flex items-center font-medium text-center mx-2"
+										>Test Zapier Webhook
+									</SecondaryButton>
 									<SecondaryButton
 										@click.prevent="editLink(link)"
 										class="inline-flex items-center font-medium text-center"

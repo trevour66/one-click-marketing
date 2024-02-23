@@ -398,7 +398,56 @@ class EmailMarketingLinkController extends Controller{
             //throw $th;
             return redirect()->away($link->failure_page_url);
         }
-    }    
-
+    } 
     
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function test_zapier_hook(Request $request, string $emailMarketingLink_id)
+    {
+        try {
+            $emailMarketingLink_id = $emailMarketingLink_id ?? false;
+            
+            $emailMarketingLink = emailMarketingLink::where("email_marketing_links_id", "=", $emailMarketingLink_id)->first() ?? false;
+
+            if(! $emailMarketingLink){
+                throw new Error('No match found. Please contact support');
+            }
+
+            $zapier_webhook_url = $emailMarketingLink->zapier_webhook_url ?? false;
+
+            if(! $zapier_webhook_url){
+                throw new Error("zapier_webhook_url is required but not gotten");
+            }
+
+            Http::post($zapier_webhook_url, [
+                'email' => "test@test.com",
+                'firstname'  => "John",
+                'lastname'  => "Doe",                
+            ]);
+
+           $resData = response(json_encode([
+                    'status' => "success",
+                    "data" =>null,
+                ]
+            ), 200)
+            ->header('Content-Type', 'application/json');
+    
+            return $resData;   
+        } catch (\Throwable $th) {
+            $resData = response(json_encode([
+                    'status' => "error",
+                    "data" => null,
+                    "message" => $th->getMessage()
+                ]
+            ), 400)
+            ->header('Content-Type', 'application/json');
+
+            return $resData;
+        }
+    } 
+
 }

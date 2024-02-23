@@ -129,15 +129,18 @@ const newLinkForm_submit = async () => {
 					footer:
 						'<i class="text-sm">Save this link and give it to your partner to send from their email service. It will only work when sent from the email service provider selected during setup. Do not use it on your website.</i>',
 				}).then(async (result) => {
-					if (result.isConfirmed && redirect_to_links) {
+					if (result.isConfirmed && props?.redirect_to_links) {
 						let backURL = route("marketing_link.index");
 						router.visit(backURL);
 					}
 				});
 			}
 
-			const element = document.getElementById("LinkContainer");
-			element.scrollIntoView();
+			const element = document.getElementById("LinkContainer") ?? false;
+
+			if (element) {
+				element.scrollIntoView();
+			}
 
 			console.log(response);
 		})
@@ -148,7 +151,7 @@ const newLinkForm_submit = async () => {
 				err?.response?.data?.message ??
 				"Error preparing your link. Please contact support";
 
-			console.log(error);
+			console.log(err);
 		});
 };
 
@@ -420,7 +423,6 @@ onMounted(() => {
 								></div>
 							</template> -->
 
-							<InputError class="mt-2" :message="error" />
 							<div class="flex items-center gap-4">
 								<Transition
 									enter-from-class="opacity-0"
