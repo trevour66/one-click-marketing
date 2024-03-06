@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
@@ -33,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
         Inertia::share([
             'google_recaptcha_config' => [
                 'google_recaptcha_key' => config('recaptcha.key'),          
-            ]
+            ],
         ]);
     }
 }

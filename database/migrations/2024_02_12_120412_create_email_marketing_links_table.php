@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id('email_marketing_links_id');
             $table->string('success_page_url');
             $table->string('failure_page_url');
-            $table->string('name')->unique();
+            $table->string('name');
             $table->string('campaign');
             $table->string('zapier_webhook_url');
             $table->string('link_identifier')->unique();

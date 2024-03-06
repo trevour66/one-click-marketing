@@ -12,6 +12,10 @@ export const useModalStore = defineStore("modal", () => {
 		currentModal.value = "EDIT_LINK";
 	};
 
+	const openNewInviteModal = () => {
+		currentModal.value = "NEW_INVITE";
+	};
+
 	const closeModal = () => {
 		currentModal.value = "";
 	};
@@ -20,6 +24,7 @@ export const useModalStore = defineStore("modal", () => {
 		currentModal,
 		openNewLinkModal,
 		openEditLinkModal,
+		openNewInviteModal,
 		closeModal,
 	};
 });

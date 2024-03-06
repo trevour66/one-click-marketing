@@ -198,6 +198,9 @@ return [
         // Recaptha
         Mews\Captcha\CaptchaServiceProvider::class,
 
+        // Spatie
+        Spatie\Permission\PermissionServiceProvider::class,
+
     ],
 
     /*

@@ -5,9 +5,17 @@ import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
-import { Link } from "@inertiajs/vue3";
+import { Link, Head, usePage } from "@inertiajs/vue3";
 
 const showingNavigationDropdown = ref(false);
+
+const user = usePage().props.auth.user;
+const user_unique_public_id = user.user_unique_public_id;
+const userRoles = user?.roles ?? [];
+
+const userRolesName = userRoles.map((elem) => {
+	return elem.name;
+});
 </script>
 
 <template>
@@ -40,6 +48,13 @@ const showingNavigationDropdown = ref(false);
 									:active="route().current('marketing_link.index')"
 								>
 									All Links
+								</NavLink>
+								<NavLink
+									v-if="(userRolesName ?? []).includes('super-admin')"
+									:href="route('marketing_accounts.index')"
+									:active="route().current('marketing_accounts.index')"
+								>
+									Accounts
 								</NavLink>
 							</div>
 						</div>
@@ -146,6 +161,13 @@ const showingNavigationDropdown = ref(false);
 							:active="route().current('marketing_link.index')"
 						>
 							All Links
+						</ResponsiveNavLink>
+						<ResponsiveNavLink
+							v-if="(userRolesName ?? []).includes('super-admin')"
+							:href="route('marketing_accounts.index')"
+							:active="route().current('marketing_accounts.index')"
+						>
+							Accounts
 						</ResponsiveNavLink>
 					</div>
 

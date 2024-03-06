@@ -10,10 +10,20 @@ use Laravel\Sanctum\HasApiTokens;
 
 use App\Models\emailMarketingLink;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+
+    protected $appends = [
+        'permission'
+    ];
+
+    protected $with =[
+        'permissions',
+        'roles'
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -46,11 +56,23 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-     /**
+    /**
      * Get the emailMarketingLinks for the blog post.
      */
     public function emailMarketingLinks(): HasMany
     {
         return $this->hasMany(emailMarketingLink::class, 'user_unique_public_id', 'user_unique_public_id');
     }
+
+    public function getPermissionAttribute(){
+        return $this->getAllPermissions();
+    }
+
+    /**
+     * Get the employee associated with the user.
+     */
+    public function invite(): HasMany {
+        return $this->hasMany(Invite::class, 'invite_sent_by');
+    }
+
 }
