@@ -11,6 +11,7 @@ const props = defineProps({
 	invite_link: String,
 	invitedUser_email: String,
 	invitedUser_invite_already_processed: String,
+	regOnlyOnInvite: Boolean,
 });
 
 const form = useForm({
@@ -34,7 +35,16 @@ const submit = () => {
 		<Head title="Register" />
 
 		<div
-			v-if="!invite_link_is_valid"
+			v-if="!regOnlyOnInvite"
+			class="my-6 flex flex-col items-center space-y-3"
+		>
+			<div class="text-base font-semibold leading-6 text-gray-800">
+				<p>Register your new account</p>
+			</div>
+		</div>
+
+		<div
+			v-else-if="!invite_link_is_valid"
 			class="my-6 flex flex-col items-center space-y-3"
 		>
 			<div class="text-base font-semibold leading-6 text-gray-800">

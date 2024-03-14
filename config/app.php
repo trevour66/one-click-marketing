@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Facade;
 
 return [
 
+    'regOnlyOnInvite' => env('REGISTER_ONLY_ON_INVITE', 'false'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Name

@@ -49,6 +49,7 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $elevatedUsers = config('elevated_user.emails');
+        $regOnlyOnInvite = config('app.regOnlyOnInvite');
         
         $userIsElevated = false;
 
@@ -91,7 +92,36 @@ class RegisteredUserController extends Controller
 
             return redirect(RouteServiceProvider::HOME);
 
-        }else{
+        }else if(!($regOnlyOnInvite ?? false)) {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:'.User::class,
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ]);
+
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'user_unique_public_id' => $this->generateUniqueId()
+            ]);
+
+            $entry_level_user = Role::findOrCreate('entry-level-user');          
+
+            $permissions_entry_level_user[] = Permission::findOrCreate('create personal links');
+            $permissions_entry_level_user[] = Permission::findOrCreate('manage personal links');
+            $permissions_entry_level_user[] = Permission::findOrCreate('delete personal links');
+
+            $entry_level_user->syncPermissions($permissions_entry_level_user);
+
+            $user->assignRole($entry_level_user);
+
+            event(new Registered($user));
+
+            Auth::login($user);
+
+            return redirect(RouteServiceProvider::HOME);
+        } else{
             $request->validate([
                 'name' => 'required|string|max:255',
                 'invite_link' => 'required|string|exists:invites,invite_link_ref',
@@ -215,6 +245,7 @@ class RegisteredUserController extends Controller
 
         
         return Inertia::render('Auth/Register', [
+            'regOnlyOnInvite' => config('app.regOnlyOnInvite'),
             'invite_link_is_valid' => $invite_link_is_valid,
             'invite_link' => $invite_link,
             'invitedUser_email' => $invitedUser_email,
