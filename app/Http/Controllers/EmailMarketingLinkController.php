@@ -106,7 +106,7 @@ class EmailMarketingLinkController extends Controller{
 
             $provider = emailMarketingPlatform::where("email_marketing_platforms_id", "=", $validated["partner_email_service"])->first() ?? false;
 
-            logger($provider);
+            // logger($provider);
 
             if(!$provider){
                 throw new Error('We experienced a problem identifying the email provider. Please try again and if problem persist, contact support');
@@ -115,16 +115,16 @@ class EmailMarketingLinkController extends Controller{
             $name = $provider->name ?? false;
             $merge_tag_email = $provider->merge_tag_email ?? false;
             $merge_tag_firstname = $provider->merge_tag_firstname ?? false;
-            $merge_tag_lastname = $provider->merge_tag_lastname ?? false ;
+            $merge_tag_lastname = $provider->merge_tag_lastname ?? false ;            
+
 
             if(
                 !$name ||
-                !$merge_tag_email ||
-                !$merge_tag_firstname ||
-                !$merge_tag_lastname
+                !$merge_tag_email 
             ){
                 throw new Error('We experienced a problem identifying the email provider. Please try again and if problem persist, contact support');
             }
+
 
             $uniqueId = "";        
             $doesLinkWithSameUniqueIdExist = true;
@@ -141,7 +141,30 @@ class EmailMarketingLinkController extends Controller{
 
             $domain = config('app.url');
 
-            $full_link = $domain."/"."cl/".$uniqueId."/?email=".$merge_tag_email."&fname=".$merge_tag_firstname."&lname=".$merge_tag_lastname;
+            // $full_link = $domain."/"."cl/".$uniqueId."/?email=".$merge_tag_email."&fname=".$merge_tag_firstname."&lname=".$merge_tag_lastname;
+
+            $full_link = $domain."/"."cl/".$uniqueId."/?";
+            
+    
+            if($merge_tag_email ?? false){
+                $full_link = $full_link . "email=".$merge_tag_email;
+                
+                if(($merge_tag_firstname ?? false) || ($merge_tag_lastname ?? false)){
+                    $full_link = $full_link . "&";
+                }
+            }
+
+            if($merge_tag_firstname ?? false){
+                $full_link = $full_link . "fname=".$merge_tag_firstname."&"; 
+                
+                if(($merge_tag_lastname ?? false)){
+                    $full_link = $full_link . "&";
+                }
+            }
+
+            if($merge_tag_lastname ?? false){
+                $full_link = $full_link . "lname=".$merge_tag_lastname;
+            }
 
 
             $newLink = emailMarketingLink::create(
@@ -271,9 +294,7 @@ class EmailMarketingLinkController extends Controller{
 
             if(
                 !$name ||
-                !$merge_tag_email ||
-                !$merge_tag_firstname ||
-                !$merge_tag_lastname
+                !$merge_tag_email 
             ){
                 throw new Error('We experienced a problem identifying the email provider. Please try again and if problem persist, contact support');
             }
@@ -281,7 +302,21 @@ class EmailMarketingLinkController extends Controller{
 
             $domain = config('app.url');
 
-            $full_link = $domain."/"."cl/".$emailMarketingLink->link_identifier."/?email=".$merge_tag_email."&fname=".$merge_tag_firstname."&lname=".$merge_tag_lastname;
+            $full_link = $domain."/"."cl/".$emailMarketingLink->link_identifier."/?";
+            
+            // $full_link = $domain."/"."cl/".$emailMarketingLink->link_identifier."/?email=".$merge_tag_email."&fname=".$merge_tag_firstname."&lname=".$merge_tag_lastname;
+            
+            if($merge_tag_email ?? false){
+                $full_link = $full_link . "email=".$merge_tag_email . "&";
+            }
+
+            if($merge_tag_firstname ?? false){
+                $full_link = $full_link . "fname=".$merge_tag_firstname."&";               
+            }
+
+            if($merge_tag_lastname ?? false){
+                $full_link = $full_link . "lname=".$merge_tag_lastname;
+            }
 
 
             $emailMarketingLink->update(               
